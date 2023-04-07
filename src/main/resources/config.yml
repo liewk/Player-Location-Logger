@@ -1,4 +1,4 @@
 settings:
   checktime: 10
-  # Time is in minutes, cannot be equal to or lower than 0
+  # Time is in minutes, setting to or below 0 will disable the automatic logger
   # Default is 10 minutes

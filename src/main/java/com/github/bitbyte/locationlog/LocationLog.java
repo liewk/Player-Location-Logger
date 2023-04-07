@@ -14,12 +14,19 @@ public final class LocationLog extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        saveDefaultConfig();
-        checkTimeTicks = 20 * 60 * getConfig().getInt("settings.checktime");
-        if (checkTimeTicks <= 0) {
-            getLogger().severe("Invalid setting in config file");
+        try {
+            checkTimeTicks = 20 * 60 * getConfig().getInt("settings.checktime");
+        } catch (NumberFormatException | NullPointerException ex) {
+            getLogger().severe("Unable to utilize the set check time. Defaulting to 10 minutes.");
+            checkTimeTicks = 12000;
         }
-        logger();
+        if (checkTimeTicks <= 0) {
+            getLogger().info("Check time setting is set to or below 0. Disabling Automatic logger.");
+        }
+        else {
+            getLogger().info("Automatic logger is running every " + getConfig().getInt("settings.checktime") + " minutes.");
+            logger();
+        }
     }
 
     @Override
@@ -40,7 +47,8 @@ public final class LocationLog extends JavaPlugin {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (command.getName().equalsIgnoreCase("loglocations")) {
             logPlayerLocations();
-            sender.sendPlainMessage("Logged players locations");
+            sender.sendPlainMessage("Logged all players locations");
+            return true;
         }
         return false;
     }
