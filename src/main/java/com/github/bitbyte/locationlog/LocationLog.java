@@ -53,7 +53,13 @@ public final class LocationLog extends JavaPlugin {
             double x = location.getX();
             double y = location.getY();
             double z = location.getZ();
-            getLogger().info(player.getName() + " is at location: X: " + String.format("%.2f", x) + ", Y: " + String.format("%.2f", y) + ", Z: " + String.format("%.2f", z));
+            String logMessage = player.getName() + " is at location: X: " + String.format("%.2f", x) + ", Y: " + String.format("%.2f", y) + ", Z: " + String.format("%.2f", z);
+            getLogger().info(logMessage);
+            for (Player p : Bukkit.getServer().getOnlinePlayers()) {
+                if (p.hasPermission("locationlog.viewlog")) {
+                    p.sendPlainMessage(logMessage);
+                }
+            }
         }
     }
 
@@ -61,9 +67,31 @@ public final class LocationLog extends JavaPlugin {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (command.getName().equalsIgnoreCase("loglocations")) {
-            logPlayerLocations();
-            sender.sendPlainMessage("Logged all players locations");
-            return true;
+            if (args.length == 0) {
+                logPlayerLocations();
+                sender.sendPlainMessage("Logged all players locations");
+                return true;
+            } else if (args.length == 1) {
+                Player targetPlayer = Bukkit.getPlayer(args[0]);
+                if (targetPlayer != null) {
+                    Location location = targetPlayer.getLocation();
+                    double x = location.getX();
+                    double y = location.getY();
+                    double z = location.getZ();
+                    String playerLocationMsg = targetPlayer.getName() + " is at location: X: " + String.format("%.2f", x) + ", Y: " + String.format("%.2f", y) + ", Z: " + String.format("%.2f", z);
+                    getLogger().info(playerLocationMsg);
+                    if (sender.hasPermission("locationlog.viewlog")) {
+                        sender.sendPlainMessage(playerLocationMsg);
+                    }
+                    return true;
+                } else {
+                    sender.sendPlainMessage("Player not found");
+                    return false;
+                }
+            } else {
+                sender.sendPlainMessage("Usage: /loglocations or /loglocations <player>");
+                return false;
+            }
         }
         if (command.getName().equalsIgnoreCase("logadd")) {
             if (args.length != 1) {

@@ -2,6 +2,10 @@ name: LocationLog
 version: '${project.version}'
 main: com.github.bitbyte.locationlog.LocationLog
 api-version: 1.19
+permissions:
+  locationlog.viewlog:
+    description: Players with this permission get sent the location logs. This can result in spammy messages
+    default: false
 commands:
   loglocations:
     aliases:
