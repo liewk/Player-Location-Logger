@@ -14,6 +14,7 @@ public final class LocationLog extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        saveDefaultConfig();
         try {
             checkTimeTicks = 20 * 60 * getConfig().getInt("settings.checktime");
         } catch (NumberFormatException | NullPointerException ex) {
@@ -24,7 +25,7 @@ public final class LocationLog extends JavaPlugin {
             getLogger().info("Check time setting is set to or below 0. Disabling Automatic logger.");
         }
         else {
-            getLogger().info("Automatic logger is running every " + getConfig().getInt("settings.checktime") + " minutes.");
+            getLogger().info("Automatic logger is running every " + getConfig().getInt("settings.checktime") + " minute(s).");
             logger();
         }
     }
