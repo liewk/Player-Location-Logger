@@ -18,6 +18,7 @@ public final class LocationLog extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        java.util.logging.Logger.getLogger("").setLevel(java.util.logging.Level.ALL);
         saveDefaultConfig();
         try {
             checkTimeTicks = 20 * 60 * getConfig().getInt("settings.checktime");
