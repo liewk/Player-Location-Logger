@@ -2,11 +2,15 @@ package com.github.bitbyte.locationlog;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
+
+import java.util.List;
+import java.util.UUID;
 
 public final class LocationLog extends JavaPlugin {
 
@@ -32,10 +36,18 @@ public final class LocationLog extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        saveConfig();
     }
 
     private synchronized void logPlayerLocations() {
+        List<String> players = getConfig().getStringList("specified-players");
+        String listType = getConfig().getString("settings.listtype");
+        boolean isBlacklist = listType.equalsIgnoreCase("blacklist");
         for (Player player : Bukkit.getServer().getOnlinePlayers()) {
+            UUID playerUUID = player.getUniqueId();
+            if ((isBlacklist && players.contains(playerUUID.toString())) || (!isBlacklist && !players.contains(playerUUID.toString()))) {
+                continue;
+            }
             Location location = player.getLocation();
             double x = location.getX();
             double y = location.getY();
@@ -44,11 +56,59 @@ public final class LocationLog extends JavaPlugin {
         }
     }
 
+
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (command.getName().equalsIgnoreCase("loglocations")) {
             logPlayerLocations();
             sender.sendPlainMessage("Logged all players locations");
+            return true;
+        }
+        if (command.getName().equalsIgnoreCase("logadd")) {
+            if (args.length != 1) {
+                sender.sendPlainMessage("Usage: /logadd <player>");
+                return false;
+            }
+            String playerName = args[0];
+            OfflinePlayer player = Bukkit.getOfflinePlayer(playerName);
+            UUID playerUUID = player.getUniqueId();
+            List<String> players = getConfig().getStringList("specified-players");
+            if (!players.contains(playerUUID.toString())) {
+                players.add(playerUUID.toString());
+                getConfig().set("specified-players", players);
+                saveConfig();
+                sender.sendPlainMessage(playerName + " has been added to the " + getConfig().getString("settings.listtype"));
+            } else {
+                sender.sendPlainMessage(playerName + " is already in the " + getConfig().getString("settings.listtype"));
+            }
+            return true;
+        }
+        if (command.getName().equalsIgnoreCase("logremove")) {
+            if (args.length != 1) {
+                sender.sendPlainMessage("Usage: /removeplayer <player>");
+                return false;
+            }
+            String playerName = args[0];
+            OfflinePlayer player = Bukkit.getOfflinePlayer(playerName);
+            UUID playerUUID = player.getUniqueId();
+            List<String> players = getConfig().getStringList("specified-players");
+            if (players.contains(playerUUID.toString())) {
+                players.remove(playerUUID.toString());
+                getConfig().set("specified-players", players);
+                saveConfig();
+                sender.sendPlainMessage(playerName + " has been removed from the " + getConfig().getString("settings.listtype"));
+            } else {
+                sender.sendPlainMessage(playerName + " is not in the " + getConfig().getString("settings.listtype"));
+            }
+            return true;
+        }
+        if (command.getName().equalsIgnoreCase("setlisttype")) {
+            if (args.length != 1) {
+                sender.sendPlainMessage("Usage: /changelisttype <blacklist/whitelist>");
+                return false;
+            }
+            getConfig().set("settings.listtype", args[0]);
+            sender.sendPlainMessage("List type changed to " + args[0]);
             return true;
         }
         return false;

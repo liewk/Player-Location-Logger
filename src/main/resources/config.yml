@@ -2,3 +2,7 @@ settings:
   checktime: 10
   # Time is in minutes, setting to or below 0 will disable the automatic logger
   # Default is 10 minutes
+  listtype: blacklist
+  # Whether to use a blacklist or a whitelist, default is blacklist.
+  # Blacklist prevents players from being logged, if whitelist is enabled then only specified people are logged
+specified-players:

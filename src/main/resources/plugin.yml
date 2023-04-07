@@ -5,7 +5,14 @@ api-version: 1.19
 commands:
   loglocations:
     aliases:
-      - forcelocations
       - locations
       - forcelog
     permission: locationlog.forcelog
+  logadd:
+    permission: locationlog.listadd
+  logremove:
+    permission: locationlog.listremove
+  setlisttype:
+    aliases:
+      - changelisttype
+    permission: locationlog.setlisttype
