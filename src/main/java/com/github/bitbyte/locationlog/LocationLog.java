@@ -34,7 +34,7 @@ public final class LocationLog extends JavaPlugin {
     public void onDisable() {
     }
 
-    private void logPlayerLocations() {
+    private synchronized void logPlayerLocations() {
         for (Player player : Bukkit.getServer().getOnlinePlayers()) {
             Location location = player.getLocation();
             double x = location.getX();
