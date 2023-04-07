@@ -1,0 +1,4 @@
+name: LocationLog
+version: '${project.version}'
+main: com.github.bitbyte.locationlog.LocationLog
+api-version: 1.19
