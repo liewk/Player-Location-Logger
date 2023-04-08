@@ -1,3 +1,5 @@
+version: 1
+# Don't touch the version number
 settings:
   checkhours: 0
   checkminutes: 10

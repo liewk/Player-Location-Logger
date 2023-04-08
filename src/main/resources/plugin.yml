@@ -11,7 +11,7 @@ permissions:
     description: Players with this permission are exempt from auto logging
     default: false
   locationlog.viewlog:
-    description: Players with this permissions can see single player logs they did
+    description: Players with this permissions can see any specific player logs they do
 commands:
   loglocations:
     aliases:

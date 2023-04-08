@@ -40,7 +40,7 @@ public final class LocationLog extends JavaPlugin {
         }
         checkTimeTicks = checkTimeHours + checkTimeMinutes + checkTimeSeconds;
         if (checkTimeTicks <= 0) {
-            getLogger().info("Check time setting is set to or below 0. Disabling Automatic logger.");
+            getLogger().info("Check time settings are set to or below 0. Disabling Automatic logger.");
         }
         else {
             getLogger().info("Automatic logger is running every " + getConfig().getInt("settings.checkhours") + " hour(s), " + getConfig().getInt("settings.checkminutes") + " minute(s), " + getConfig().getInt("settings.checkseconds") + " second(s).");
