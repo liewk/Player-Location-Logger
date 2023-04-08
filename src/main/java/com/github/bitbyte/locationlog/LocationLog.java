@@ -153,6 +153,7 @@ public final class LocationLog extends JavaPlugin {
             }
             getConfig().set("settings.listtype", args[0]);
             sender.sendPlainMessage("List type changed to " + args[0]);
+            saveConfig();
             return true;
         }
         return false;
