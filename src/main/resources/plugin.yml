@@ -4,12 +4,14 @@ main: com.github.bitbyte.locationlog.LocationLog
 api-version: 1.19
 author: 1BitByte
 permissions:
-  locationlog.viewlog:
-    description: Players with this permission get sent the location logs. This can result in spammy messages
+  locationlog.viewautolog:
+    description: Players with this permission get sent the automated location logs. This can result in spammy messages
     default: false
   locationlog.exempt:
-    description: Players with this permission are exempt from the logging
+    description: Players with this permission are exempt from auto logging
     default: false
+  locationlog.viewlog:
+    description: Players with this permissions can see single player logs they did
 commands:
   loglocations:
     aliases:

@@ -14,22 +14,36 @@ import java.util.UUID;
 
 public final class LocationLog extends JavaPlugin {
     private int checkTimeTicks;
-
+    int checkTimeHours = 0;
+    int checkTimeMinutes = 0;
+    int checkTimeSeconds = 0;
     @Override
     public void onEnable() {
-        java.util.logging.Logger.getLogger("").setLevel(java.util.logging.Level.ALL);
         saveDefaultConfig();
         try {
-            checkTimeTicks = 20 * 60 * getConfig().getInt("settings.checktime");
+            checkTimeHours = 20 * 60 * 60 * getConfig().getInt("settings.checkhours");
         } catch (NumberFormatException | NullPointerException ex) {
-            getLogger().severe("Unable to utilize the set check time. Defaulting to 10 minutes.");
-            checkTimeTicks = 12000;
+            getLogger().warning("Unable to utilize the set check hours. Defaulting to 0 hours.");
+            getConfig().set("settings.checkhours", 0);
         }
+        try {
+            checkTimeMinutes = 20 * 60 * getConfig().getInt("settings.checkminutes");
+        } catch (NumberFormatException | NullPointerException ex) {
+            getLogger().warning("Unable to utilize the set check minutes. Defaulting to 10 minutes.");
+            getConfig().set("settings.checkminutes", 10);
+        }
+        try {
+            checkTimeSeconds = 20 * getConfig().getInt("settings.checkseconds");
+        } catch (NumberFormatException | NullPointerException ex) {
+            getLogger().warning("Unable to utilize the set check seconds. Defaulting to 0 seconds.");
+            getConfig().set("settings.checkseconds", 0);
+        }
+        checkTimeTicks = checkTimeHours + checkTimeMinutes + checkTimeSeconds;
         if (checkTimeTicks <= 0) {
             getLogger().info("Check time setting is set to or below 0. Disabling Automatic logger.");
         }
         else {
-            getLogger().info("Automatic logger is running every " + getConfig().getInt("settings.checktime") + " minute(s).");
+            getLogger().info("Automatic logger is running every " + getConfig().getInt("settings.checkhours") + " hour(s), " + getConfig().getInt("settings.checkminutes") + " minute(s), " + getConfig().getInt("settings.checkseconds") + " second(s).");
             logger();
         }
     }
@@ -48,23 +62,22 @@ public final class LocationLog extends JavaPlugin {
             if ((isBlacklist && players.contains(playerUUID.toString())) || (!isBlacklist && !players.contains(playerUUID.toString()))) {
                 continue;
             }
-            if (!player.hasPermission("locationlog.exempt")) {
+            if (player.hasPermission("locationlog.exempt")) {
                 continue;
             }
             Location location = player.getLocation();
             double x = location.getX();
             double y = location.getY();
             double z = location.getZ();
-            String logMessage = player.getName() + " is at X: " + String.format("%.2f", x) + ", Y: " + String.format("%.2f", y) + ", Z: " + String.format("%.2f", z) + ". In the " + location.getWorld();
+            String logMessage = player.getName() + " is in the " + location.getWorld() + " at X: " + String.format("%.2f", x) + ", Y: " + String.format("%.2f", y) + ", Z: " + String.format("%.2f", z);
             getLogger().info(logMessage);
             for (Player p : Bukkit.getServer().getOnlinePlayers()) {
-                if (p.hasPermission("locationlog.viewlog")) {
+                if (p.hasPermission("locationlog.viewautolog")) {
                     p.sendPlainMessage(logMessage);
                 }
             }
         }
     }
-
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -80,7 +93,7 @@ public final class LocationLog extends JavaPlugin {
                     double x = location.getX();
                     double y = location.getY();
                     double z = location.getZ();
-                    String playerLocationMsg = targetPlayer.getName() + " is at location: X: " + String.format("%.2f", x) + ", Y: " + String.format("%.2f", y) + ", Z: " + String.format("%.2f", z);
+                    String playerLocationMsg = targetPlayer.getName() + " is in the " + location.getWorld() + " at X: " + String.format("%.2f", x) + ", Y: " + String.format("%.2f", y) + ", Z: " + String.format("%.2f", z);
                     getLogger().info(playerLocationMsg);
                     if (sender.hasPermission("locationlog.viewlog")) {
                         sender.sendPlainMessage(playerLocationMsg);

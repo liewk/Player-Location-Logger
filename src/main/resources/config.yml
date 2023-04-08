@@ -1,6 +1,8 @@
 settings:
-  checktime: 10
-  # Time is in minutes, setting to or below 0 will disable the automatic logger
+  checkhours: 0
+  checkminutes: 10
+  checkseconds: 0
+  # Setting all to zero will disable the automatic logger
   # Default is 10 minutes
   listtype: blacklist
   # Whether to use a blacklist or a whitelist, default is blacklist.
