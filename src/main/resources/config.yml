@@ -9,4 +9,6 @@ settings:
   listtype: blacklist
   # Whether to use a blacklist or a whitelist, default is blacklist.
   # Blacklist prevents players from being logged, if whitelist is enabled then only specified people are logged
+  shorten-log: false
+  # Shortens the sentences of the logs
 specified-players:

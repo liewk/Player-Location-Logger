@@ -20,6 +20,21 @@ public final class LocationLog extends JavaPlugin {
     @Override
     public void onEnable() {
         saveDefaultConfig();
+        int currentVersion = 1; //TODO Edit this number whenever changing config.yml
+        int savedVersion = getConfig().getInt("version", 0);
+        if (savedVersion != currentVersion) {
+            getConfig().options().copyDefaults(true);
+
+            getConfig().addDefault("settings.checkhours", 0);
+            getConfig().addDefault("settings.checkminutes", 10);
+            getConfig().addDefault("settings.checkseconds", 0);
+            getConfig().addDefault("settings.shorten-log", false);
+
+            getConfig().set("checktime", null);
+
+            getConfig().set("version", currentVersion);
+            saveConfig();
+        }
         try {
             checkTimeHours = 20 * 60 * 60 * getConfig().getInt("settings.checkhours");
         } catch (NumberFormatException | NullPointerException ex) {
@@ -69,7 +84,13 @@ public final class LocationLog extends JavaPlugin {
             double x = location.getX();
             double y = location.getY();
             double z = location.getZ();
-            String logMessage = player.getName() + " is in the " + location.getWorld().getName() + " at X: " + String.format("%.2f", x) + ", Y: " + String.format("%.2f", y) + ", Z: " + String.format("%.2f", z);
+            String logMessage;
+            if (getConfig().getBoolean("settings.shorten-log")) {
+                logMessage = player.getName() + ": " + location.getWorld().getName() + ", XYZ: " + String.format("%.2f", x) + " " + String.format("%.2f", y) + " " + String.format("%.2f", z);
+            }
+            else {
+                logMessage = player.getName() + " is in the " + location.getWorld().getName() + " at X: " + String.format("%.2f", x) + ", Y: " + String.format("%.2f", y) + ", Z: " + String.format("%.2f", z);
+            }
             getLogger().info(logMessage);
             for (Player p : Bukkit.getServer().getOnlinePlayers()) {
                 if (p.hasPermission("locationlog.viewautolog")) {
@@ -93,10 +114,15 @@ public final class LocationLog extends JavaPlugin {
                     double x = location.getX();
                     double y = location.getY();
                     double z = location.getZ();
-                    String playerLocationMsg = targetPlayer.getName() + " is in the " + location.getWorld().getName() + " at X: " + String.format("%.2f", x) + ", Y: " + String.format("%.2f", y) + ", Z: " + String.format("%.2f", z);
-                    getLogger().info(playerLocationMsg);
+                    String playerLogMsg;
+                    if (getConfig().getBoolean("settings.shorten-log")) {
+                        playerLogMsg = targetPlayer.getName() + ": " + location.getWorld().getName() + ", XYZ: " + String.format("%.2f", x) + " " + String.format("%.2f", y) + " " + String.format("%.2f", z);
+                    }
+                    else {
+                        playerLogMsg = targetPlayer.getName() + " is in the " + location.getWorld().getName() + " at X: " + String.format("%.2f", x) + ", Y: " + String.format("%.2f", y) + ", Z: " + String.format("%.2f", z);
+                    }                    getLogger().info(playerLogMsg);
                     if (sender.hasPermission("locationlog.viewlog")) {
-                        sender.sendPlainMessage(playerLocationMsg);
+                        sender.sendPlainMessage(playerLogMsg);
                     }
                     return true;
                 } else {
