@@ -23,19 +23,19 @@ public final class LocationLog extends JavaPlugin {
         try {
             checkTimeHours = 20 * 60 * 60 * getConfig().getInt("settings.checkhours");
         } catch (NumberFormatException | NullPointerException ex) {
-            getLogger().warning("Unable to utilize the set check hours. Defaulting to 0 hours.");
+            getLogger().info("Unable to utilize the set check hours. Defaulting to 0 hours.");
             getConfig().set("settings.checkhours", 0);
         }
         try {
             checkTimeMinutes = 20 * 60 * getConfig().getInt("settings.checkminutes");
         } catch (NumberFormatException | NullPointerException ex) {
-            getLogger().warning("Unable to utilize the set check minutes. Defaulting to 10 minutes.");
+            getLogger().info("Unable to utilize the set check minutes. Defaulting to 10 minutes.");
             getConfig().set("settings.checkminutes", 10);
         }
         try {
             checkTimeSeconds = 20 * getConfig().getInt("settings.checkseconds");
         } catch (NumberFormatException | NullPointerException ex) {
-            getLogger().warning("Unable to utilize the set check seconds. Defaulting to 0 seconds.");
+            getLogger().info("Unable to utilize the set check seconds. Defaulting to 0 seconds.");
             getConfig().set("settings.checkseconds", 0);
         }
         checkTimeTicks = checkTimeHours + checkTimeMinutes + checkTimeSeconds;
@@ -69,7 +69,7 @@ public final class LocationLog extends JavaPlugin {
             double x = location.getX();
             double y = location.getY();
             double z = location.getZ();
-            String logMessage = player.getName() + " is in the " + location.getWorld() + " at X: " + String.format("%.2f", x) + ", Y: " + String.format("%.2f", y) + ", Z: " + String.format("%.2f", z);
+            String logMessage = player.getName() + " is in the " + location.getWorld().getName() + " at X: " + String.format("%.2f", x) + ", Y: " + String.format("%.2f", y) + ", Z: " + String.format("%.2f", z);
             getLogger().info(logMessage);
             for (Player p : Bukkit.getServer().getOnlinePlayers()) {
                 if (p.hasPermission("locationlog.viewautolog")) {
@@ -93,7 +93,7 @@ public final class LocationLog extends JavaPlugin {
                     double x = location.getX();
                     double y = location.getY();
                     double z = location.getZ();
-                    String playerLocationMsg = targetPlayer.getName() + " is in the " + location.getWorld() + " at X: " + String.format("%.2f", x) + ", Y: " + String.format("%.2f", y) + ", Z: " + String.format("%.2f", z);
+                    String playerLocationMsg = targetPlayer.getName() + " is in the " + location.getWorld().getName() + " at X: " + String.format("%.2f", x) + ", Y: " + String.format("%.2f", y) + ", Z: " + String.format("%.2f", z);
                     getLogger().info(playerLocationMsg);
                     if (sender.hasPermission("locationlog.viewlog")) {
                         sender.sendPlainMessage(playerLocationMsg);
