@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.UUID;
 
 public final class LocationLog extends JavaPlugin {
-
     private int checkTimeTicks;
 
     @Override
@@ -49,11 +48,14 @@ public final class LocationLog extends JavaPlugin {
             if ((isBlacklist && players.contains(playerUUID.toString())) || (!isBlacklist && !players.contains(playerUUID.toString()))) {
                 continue;
             }
+            if (!player.hasPermission("locationlog.exempt")) {
+                continue;
+            }
             Location location = player.getLocation();
             double x = location.getX();
             double y = location.getY();
             double z = location.getZ();
-            String logMessage = player.getName() + " is at location: X: " + String.format("%.2f", x) + ", Y: " + String.format("%.2f", y) + ", Z: " + String.format("%.2f", z);
+            String logMessage = player.getName() + " is at X: " + String.format("%.2f", x) + ", Y: " + String.format("%.2f", y) + ", Z: " + String.format("%.2f", z) + ". In the " + location.getWorld();
             getLogger().info(logMessage);
             for (Player p : Bukkit.getServer().getOnlinePlayers()) {
                 if (p.hasPermission("locationlog.viewlog")) {

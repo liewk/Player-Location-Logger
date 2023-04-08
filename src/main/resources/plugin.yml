@@ -2,9 +2,13 @@ name: LocationLog
 version: '${project.version}'
 main: com.github.bitbyte.locationlog.LocationLog
 api-version: 1.19
+author: 1BitByte
 permissions:
   locationlog.viewlog:
     description: Players with this permission get sent the location logs. This can result in spammy messages
+    default: false
+  locationlog.exempt:
+    description: Players with this permission are exempt from the logging
     default: false
 commands:
   loglocations:
