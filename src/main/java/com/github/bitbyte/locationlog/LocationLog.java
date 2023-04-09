@@ -1,5 +1,6 @@
 package com.github.bitbyte.locationlog;
 
+import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
@@ -20,15 +21,16 @@ public final class LocationLog extends JavaPlugin {
     @Override
     public void onEnable() {
         saveDefaultConfig();
+        if (getConfig().getBoolean("settings.bstats")) {
+            Metrics metrics = new Metrics(this, 18168);
+        }
         int currentVersion = 1; //TODO Edit this number whenever changing config.yml
         int savedVersion = getConfig().getInt("version", 0);
         if (savedVersion != currentVersion) {
             getConfig().options().copyDefaults(true);
 
+            // Add stuff to config
             getConfig().addDefault("settings.checkhours", 0);
-            getConfig().addDefault("settings.checkminutes", 10);
-            getConfig().addDefault("settings.checkseconds", 0);
-            getConfig().addDefault("settings.shorten-log", false);
 
             getConfig().set("checktime", null);
 
