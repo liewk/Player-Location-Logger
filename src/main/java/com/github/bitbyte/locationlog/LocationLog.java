@@ -14,10 +14,10 @@ import java.util.List;
 import java.util.UUID;
 
 public final class LocationLog extends JavaPlugin {
-    private int checkTimeTicks;
-    int checkTimeHours = 0;
-    int checkTimeMinutes = 0;
-    int checkTimeSeconds = 0;
+    int checkTimeTicks;
+    int checkTimeHours;
+    int checkTimeMinutes;
+    int checkTimeSeconds;
     @Override
     public void onEnable() {
         saveDefaultConfig();
@@ -83,16 +83,28 @@ public final class LocationLog extends JavaPlugin {
                 continue;
             }
             Location location = player.getLocation();
-            double x = location.getX();
-            double y = location.getY();
-            double z = location.getZ();
-            String logMessage;
-            if (getConfig().getBoolean("settings.shorten-log")) {
-                logMessage = player.getName() + ": " + location.getWorld().getName() + ", XYZ: " + String.format("%.2f", x) + " " + String.format("%.2f", y) + " " + String.format("%.2f", z);
+            int x = (int) location.getX();
+            int y = (int) location.getY();
+            int z = (int) location.getZ();
+            boolean shortenLog = getConfig().getBoolean("settings.shorten-log");
+            StringBuilder logMessageBuilder = new StringBuilder();
+            logMessageBuilder.append(player.getName())
+                    .append(shortenLog ? ": " : " is in ")
+                    .append(location.getWorld().getName());
+            if (shortenLog) {
+                logMessageBuilder.append(", XYZ: ")
+                        .append(x).append(' ')
+                        .append(y).append(' ')
+                        .append(z);
+            } else {
+                logMessageBuilder.append(" at X: ")
+                        .append(x)
+                        .append(", Y: ")
+                        .append(y)
+                        .append(", Z: ")
+                        .append(z);
             }
-            else {
-                logMessage = player.getName() + " is in the " + location.getWorld().getName() + " at X: " + String.format("%.2f", x) + ", Y: " + String.format("%.2f", y) + ", Z: " + String.format("%.2f", z);
-            }
+            String logMessage = logMessageBuilder.toString();
             getLogger().info(logMessage);
             for (Player p : Bukkit.getServer().getOnlinePlayers()) {
                 if (p.hasPermission("locationlog.viewautolog")) {
@@ -104,7 +116,8 @@ public final class LocationLog extends JavaPlugin {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (command.getName().equalsIgnoreCase("loglocations")) {
+        switch (command.getName().toLowerCase()) {
+            case "loglocations":
             if (args.length == 0) {
                 logPlayerLocations();
                 sender.sendPlainMessage("Logged all players locations");
@@ -113,18 +126,31 @@ public final class LocationLog extends JavaPlugin {
                 Player targetPlayer = Bukkit.getPlayer(args[0]);
                 if (targetPlayer != null) {
                     Location location = targetPlayer.getLocation();
-                    double x = location.getX();
-                    double y = location.getY();
-                    double z = location.getZ();
-                    String playerLogMsg;
-                    if (getConfig().getBoolean("settings.shorten-log")) {
-                        playerLogMsg = targetPlayer.getName() + ": " + location.getWorld().getName() + ", XYZ: " + String.format("%.2f", x) + " " + String.format("%.2f", y) + " " + String.format("%.2f", z);
+                    int x = (int) location.getX();
+                    int y = (int) location.getY();
+                    int z = (int) location.getZ();
+                    boolean shortenLog = getConfig().getBoolean("settings.shorten-log");
+                    StringBuilder logMessageBuilder = new StringBuilder();
+                    logMessageBuilder.append(targetPlayer.getName())
+                            .append(shortenLog ? ": " : " is in ")
+                            .append(location.getWorld().getName());
+                    if (shortenLog) {
+                        logMessageBuilder.append(", XYZ: ")
+                                .append(x).append(' ')
+                                .append(y).append(' ')
+                                .append(z);
+                    } else {
+                        logMessageBuilder.append(" at X: ")
+                                .append(x)
+                                .append(", Y: ")
+                                .append(y)
+                                .append(", Z: ")
+                                .append(z);
                     }
-                    else {
-                        playerLogMsg = targetPlayer.getName() + " is in the " + location.getWorld().getName() + " at X: " + String.format("%.2f", x) + ", Y: " + String.format("%.2f", y) + ", Z: " + String.format("%.2f", z);
-                    }                    getLogger().info(playerLogMsg);
+                    String playerLogMessage = logMessageBuilder.toString();
+                    getLogger().info(playerLogMessage);
                     if (sender.hasPermission("locationlog.viewlog")) {
-                        sender.sendPlainMessage(playerLogMsg);
+                        sender.sendPlainMessage(playerLogMessage);
                     }
                     return true;
                 } else {
@@ -135,8 +161,7 @@ public final class LocationLog extends JavaPlugin {
                 sender.sendPlainMessage("Usage: /loglocations or /loglocations <player>");
                 return false;
             }
-        }
-        if (command.getName().equalsIgnoreCase("logadd")) {
+            case "logadd":
             if (args.length != 1) {
                 sender.sendPlainMessage("Usage: /logadd <player>");
                 return false;
@@ -154,27 +179,25 @@ public final class LocationLog extends JavaPlugin {
                 sender.sendPlainMessage(playerName + " is already in the " + getConfig().getString("settings.listtype"));
             }
             return true;
-        }
-        if (command.getName().equalsIgnoreCase("logremove")) {
+            case "logremove":
             if (args.length != 1) {
                 sender.sendPlainMessage("Usage: /removeplayer <player>");
                 return false;
             }
-            String playerName = args[0];
-            OfflinePlayer player = Bukkit.getOfflinePlayer(playerName);
-            UUID playerUUID = player.getUniqueId();
-            List<String> players = getConfig().getStringList("specified-players");
-            if (players.contains(playerUUID.toString())) {
-                players.remove(playerUUID.toString());
-                getConfig().set("specified-players", players);
+            String playerName1 = args[0];
+            OfflinePlayer player1 = Bukkit.getOfflinePlayer(playerName1);
+            UUID playerUUID1 = player1.getUniqueId();
+            List<String> players1 = getConfig().getStringList("specified-players");
+            if (players1.contains(playerUUID1.toString())) {
+                players1.remove(playerUUID1.toString());
+                getConfig().set("specified-players", players1);
                 saveConfig();
-                sender.sendPlainMessage(playerName + " has been removed from the " + getConfig().getString("settings.listtype"));
+                sender.sendPlainMessage(playerName1 + " has been removed from the " + getConfig().getString("settings.listtype"));
             } else {
-                sender.sendPlainMessage(playerName + " is not in the " + getConfig().getString("settings.listtype"));
+                sender.sendPlainMessage(playerName1 + " is not in the " + getConfig().getString("settings.listtype"));
             }
             return true;
-        }
-        if (command.getName().equalsIgnoreCase("setlisttype")) {
+            case "setlisttype":
             if (args.length != 1) {
                 sender.sendPlainMessage("Usage: /changelisttype <blacklist/whitelist>");
                 return false;
