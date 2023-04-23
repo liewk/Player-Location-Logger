@@ -32,7 +32,6 @@ public final class LocationLog extends JavaPlugin {
         if (getConfig().getBoolean("settings.bstats")) {
             Metrics metrics = new Metrics(this, 18168);
         }
-        int currentVersion = 1; //TODO Edit this number whenever changing config.yml
         try {
             config = YamlDocument.create(new File(getDataFolder(), "config.yml"), getResource("config.yml"),
                     GeneralSettings.DEFAULT, LoaderSettings.builder().setAutoUpdate(true).build(), DumperSettings.DEFAULT, UpdaterSettings.builder().setVersioning(new BasicVersioning("version")).build());
@@ -210,7 +209,11 @@ public final class LocationLog extends JavaPlugin {
             }
             getConfig().set("settings.listtype", args[0]);
             sender.sendPlainMessage("List type changed to " + args[0]);
-            saveConfig();
+            try {
+                config.save();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
             return true;
         }
         return false;
