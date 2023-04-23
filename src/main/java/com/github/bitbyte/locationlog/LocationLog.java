@@ -22,10 +22,10 @@ import java.util.List;
 import java.util.UUID;
 
 public final class LocationLog extends JavaPlugin {
-    int checkTimeTicks;
-    int checkTimeHours;
-    int checkTimeMinutes;
-    int checkTimeSeconds;
+    static int checkTimeTicks;
+    static int checkTimeHours;
+    static int checkTimeMinutes;
+    static int checkTimeSeconds;
     private YamlDocument config;
     @Override
     public void onEnable() {
@@ -81,12 +81,8 @@ public final class LocationLog extends JavaPlugin {
         boolean isBlacklist = listType.equalsIgnoreCase("blacklist");
         for (Player player : Bukkit.getServer().getOnlinePlayers()) {
             UUID playerUUID = player.getUniqueId();
-            if ((isBlacklist && players.contains(playerUUID.toString())) || (!isBlacklist && !players.contains(playerUUID.toString()))) {
-                continue;
-            }
-            if (player.hasPermission("locationlog.exempt")) {
-                continue;
-            }
+            if ((isBlacklist && players.contains(playerUUID.toString())) || (!isBlacklist && !players.contains(playerUUID.toString()))) continue;
+            if (player.hasPermission("locationlog.exempt")) continue;
             Location location = player.getLocation();
             int x = (int) location.getX();
             int y = (int) location.getY();
@@ -186,7 +182,7 @@ public final class LocationLog extends JavaPlugin {
             return true;
             case "logremove":
             if (args.length != 1) {
-                sender.sendPlainMessage("Usage: /removeplayer <player>");
+                sender.sendPlainMessage("Usage: /logremove <player>");
                 return false;
             }
             String playerName1 = args[0];
@@ -204,7 +200,7 @@ public final class LocationLog extends JavaPlugin {
             return true;
             case "setlisttype":
             if (args.length != 1) {
-                sender.sendPlainMessage("Usage: /changelisttype <blacklist/whitelist>");
+                sender.sendPlainMessage("Usage: /setlisttype <blacklist/whitelist>");
                 return false;
             }
             getConfig().set("settings.listtype", args[0]);
