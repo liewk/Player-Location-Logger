@@ -1,5 +1,11 @@
 package com.github.bitbyte.locationlog;
 
+import dev.dejvokep.boostedyaml.YamlDocument;
+import dev.dejvokep.boostedyaml.dvs.versioning.BasicVersioning;
+import dev.dejvokep.boostedyaml.settings.dumper.DumperSettings;
+import dev.dejvokep.boostedyaml.settings.general.GeneralSettings;
+import dev.dejvokep.boostedyaml.settings.loader.LoaderSettings;
+import dev.dejvokep.boostedyaml.settings.updater.UpdaterSettings;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -10,6 +16,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
@@ -18,24 +26,18 @@ public final class LocationLog extends JavaPlugin {
     int checkTimeHours;
     int checkTimeMinutes;
     int checkTimeSeconds;
+    private YamlDocument config;
     @Override
     public void onEnable() {
-        saveDefaultConfig();
         if (getConfig().getBoolean("settings.bstats")) {
             Metrics metrics = new Metrics(this, 18168);
         }
         int currentVersion = 1; //TODO Edit this number whenever changing config.yml
-        int savedVersion = getConfig().getInt("version", 0);
-        if (savedVersion != currentVersion) {
-            getConfig().options().copyDefaults(true);
-
-            // Add stuff to config
-            getConfig().addDefault("settings.checkhours", 0);
-
-            getConfig().set("checktime", null);
-
-            getConfig().set("version", currentVersion);
-            saveConfig();
+        try {
+            config = YamlDocument.create(new File(getDataFolder(), "config.yml"), getResource("config.yml"),
+                    GeneralSettings.DEFAULT, LoaderSettings.builder().setAutoUpdate(true).build(), DumperSettings.DEFAULT, UpdaterSettings.builder().setVersioning(new BasicVersioning("version")).build());
+        } catch (IOException ex) {
+            ex.printStackTrace();
         }
         try {
             checkTimeHours = 20 * 60 * 60 * getConfig().getInt("settings.checkhours");
@@ -67,7 +69,11 @@ public final class LocationLog extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        saveConfig();
+        try {
+            config.save();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private synchronized void logPlayerLocations() {
