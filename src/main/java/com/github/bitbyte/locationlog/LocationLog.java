@@ -47,14 +47,14 @@ public final class LocationLog extends JavaPlugin {
         try {
             checkTimeMinutes = 20 * 60 * getConfig().getInt("settings.checkminutes");
         } catch (NumberFormatException | NullPointerException ex) {
-            getLogger().info("Unable to utilize the set check minutes. Defaulting to 10 minutes.");
-            getConfig().set("settings.checkminutes", 10);
+            getLogger().info("Unable to utilize the set check minutes. Defaulting to 0 minutes.");
+            getConfig().set("settings.checkminutes", 0);
         }
         try {
             checkTimeSeconds = 20 * getConfig().getInt("settings.checkseconds");
         } catch (NumberFormatException | NullPointerException ex) {
-            getLogger().info("Unable to utilize the set check seconds. Defaulting to 0 seconds.");
-            getConfig().set("settings.checkseconds", 0);
+            getLogger().info("Unable to utilize the set check seconds. Defaulting to 1 second.");
+            getConfig().set("settings.checkseconds", 1);
         }
         checkTimeTicks = checkTimeHours + checkTimeMinutes + checkTimeSeconds;
         if (checkTimeTicks <= 0) {
