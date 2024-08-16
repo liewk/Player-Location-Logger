@@ -2,10 +2,10 @@ version: 1
 # Don't touch the version number
 settings:
   checkhours: 0
-  checkminutes: 10
-  checkseconds: 0
+  checkminutes: 0
+  checkseconds: 1
   # Setting all to zero will disable the automatic logger
-  # Default is 10 minutes
+  # Default is 1 second
   listtype: blacklist
   # Whether to use a blacklist or a whitelist, default is blacklist.
   # Blacklist prevents players from being logged, if whitelist is enabled then only specified people are logged
